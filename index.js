@@ -53,6 +53,45 @@ app.post("/create", csrfProtection, (req, res) => {
   return;
 });
 
+app.get("/create-interesting", csrfProtection, (req, res) => {
+  res.render("interesting-form", { users, fields: interestingFields, errors: [], csrfToken: req.csrfToken() });
+});
+
+app.post("/create-interesting", csrfProtection, (req, res) => {
+  const { firstName, lastName, email, age, favoriteBeatle, iceCream, password, confirmedPassword } = req.body;
+  const errors = [];
+
+  if (!firstName) errors.push("Please provide a first name.");
+  if (!lastName) errors.push("Please provide a last name.");
+  if (!email) errors.push("Please provide an email.");
+  if (!password) errors.push("Please provide a password.");
+  if (!confirmedPassword) errors.push("Please confirm your password.");
+  if (password !== confirmedPassword) errors.push("The provided values for the password and password confirmation fields did not match.");
+
+  if (errors.length === 0) {
+    let newUser = { firstName, lastName, email, age, favoriteBeatle, iceCream: iceCream.length > 0, password, id: users[users.length - 1].id + 1 };
+    users.push(newUser);
+    res.redirect("/");
+    return;
+  }
+
+  interestingFields[0].value = firstName;
+  interestingFields[1].value = lastName;
+  interestingFields[2].value = email;
+  interestingFields[3].value = age;
+  interestingFields[4].value = favoriteBeatle;
+
+  res.render('interesting-form', { users, interestingFields, errors, csrfToken: req.csrfToken() });
+
+  interestingFields[0].value = null;
+  interestingFields[1].value = null;
+  interestingFields[2].value = null;
+  interestingFields[3].value = null;
+  interestingFields[4].value = null;
+
+  return;
+});
+
 const users = [
   {
     id: 1,
@@ -85,6 +124,41 @@ const fields = [
   }
 ]
 
+const interestingFields = [
+  {
+    type: "text",
+    name: "firstName"
+  },
+  {
+    type: "text",
+    name: "lastName"
+  },
+  {
+    type: "email",
+    name: "email"
+  },
+  {
+    type: "number",
+    name: "age"
+  },
+  {
+    type: "text",
+    name: "favoriteBeatle"
+  },
+  {
+    type: "checkbox",
+    name: "iceCream"
+  },
+  {
+    type: "password",
+    name: "password"
+  },
+  {
+    type: "password",
+    name: "confirmedPassword"
+  }
+
+]
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
 
