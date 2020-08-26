@@ -3,20 +3,27 @@ extends layout.pug
 mixin field(type, name)
   label=name
   input(type=type, name=name, value=name)
+mixin beatleOption(name)
+  if beatlesTracker[name]
+    option(value=name selected)= name
+  else
+    option(value=name)= name
 block content
   form(method="post" action="/create-interesting")
     input(type="hidden" name="_csrf" value=csrfToken)
     each field in fields
       label(for= field.name)=field.name
       input(type= field.type name= field.name id= field.name, value= field.value)
+    label(for= "iceCream") iceCream
+    if (iceCreamChecked)
+      input#iceCream(name="iceCream" type="checkbox" checked)
+    else
+      input#iceCream(name="iceCream" type="checkbox")
     label(for= "favoriteBeatle") favorite-beatle
     select#favorite-beatle(name="favoriteBeatle")
       option(value='') --Please choose an option--
-      option(value='John') John
-      option(value='George') George
-      option(value='Paul') Paul
-      option(value='Ringo') Ringo
-      option(value="Scooby-Doo") Scooby-Doo
+      each beatle in ["John", "Paul", "George", "Ringo", "Scooby-Doo"]
+        +beatleOption(beatle)
     input(type="submit" value="Create Interesting User")
   p The following errors were found:
     ul

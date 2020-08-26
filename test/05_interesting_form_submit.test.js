@@ -198,7 +198,7 @@ describe("submit-interesting", () => {
         email: null
       });
 
-      expect($("option[selected='selected']").attr("value")).to.equal(
+      expect($("option[selected]").attr("value")).to.equal(
         formData.favoriteBeatle
       );
     });
