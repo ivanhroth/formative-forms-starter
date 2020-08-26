@@ -1,0 +1,13 @@
+
+extends layout.pug
+
+mixin field(type, name)
+  label=name
+  input(type=type, name=name, value=name)
+block content
+  form(method="post" action="/create")
+    input(type="hidden" name="_csrf" value=csrfToken)
+    each field in fields
+      label(for= field.name)=field.name
+      input(type= field.type name= field.name id= field.name)
+    input(type="submit" value="Create User")
